@@ -5,15 +5,23 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../utils/constants";
 import { toast } from "react-toastify";
 import ChatCard from "../components/ChatCard";
+import { useDispatch } from "react-redux";
+import { setChat } from "../redux/slice/commonSlice";
 
 const AllChats = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [directMessages, setDirectMessages] = useState([]);
   const [groupChats, setGroupChats] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [searchedDms, setSearchedDms] = useState([]);
   const [searchedGroupChats, setSearchedGroupChats] = useState([]);
   const userId = localStorage.getItem("userId") || "";
+
+  const handleChatClick = (chat) => {
+    dispatch(setChat(chat));
+    navigate("/chat");
+  };
 
   const fetchAllChats = async () => {
     try {
@@ -77,19 +85,18 @@ const AllChats = () => {
             {Boolean(searchedDms?.length) ||
             Boolean(searchedGroupChats?.length) ? (
               <>
-                {searchedGroupChats?.map((chat) => {
+                {searchedGroupChats?.map((chat, index) => {
                   return (
                     <ChatCard
                       title={chat?.name}
                       avatar={chat?.avatar}
                       isGroup
-                      onPress={() => {
-                        console.log("hello");
-                      }}
+                      onPress={() => handleChatClick(chat)}
+                      key={index}
                     />
                   );
                 })}
-                {searchedDms?.map((chat) => {
+                {searchedDms?.map((chat, index) => {
                   const user = chat?.members?.find(
                     (member) => member?._id !== userId
                   );
@@ -97,9 +104,8 @@ const AllChats = () => {
                     <ChatCard
                       title={user?.username}
                       avatar={user?.avatar}
-                      onPress={() => {
-                        console.log("hello");
-                      }}
+                      onPress={() => handleChatClick(chat)}
+                      key={index}
                     />
                   );
                 })}
@@ -114,15 +120,14 @@ const AllChats = () => {
               <div className="allChats-chat-widget">
                 <div className="allChats-chat-widget-title">Groups</div>
                 <div>
-                  {groupChats?.map((chat) => {
+                  {groupChats?.map((chat, index) => {
                     return (
                       <ChatCard
                         title={chat?.name}
                         avatar={chat?.avatar}
                         isGroup
-                        onPress={() => {
-                          console.log("hello");
-                        }}
+                        onPress={() => handleChatClick(chat)}
+                        key={index}
                       />
                     );
                   })}
@@ -133,7 +138,7 @@ const AllChats = () => {
               <div className="allChats-chat-widget">
                 <div className="allChats-chat-widget-title">People</div>
                 <div>
-                  {directMessages?.map((chat) => {
+                  {directMessages?.map((chat, index) => {
                     const user = chat?.members?.find(
                       (member) => member?._id !== userId
                     );
@@ -141,9 +146,8 @@ const AllChats = () => {
                       <ChatCard
                         title={user?.username}
                         avatar={user?.avatar}
-                        onPress={() => {
-                          console.log("hello");
-                        }}
+                        onPress={() => handleChatClick(chat)}
+                        key={index}
                       />
                     );
                   })}

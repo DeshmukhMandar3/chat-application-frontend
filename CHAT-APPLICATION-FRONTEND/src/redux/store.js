@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "./slice/userSlice";
+import commonReducer from "./slice/commonSlice";
 
 export default configureStore({
-  reducer: { users: userReducer },
+  reducer: { common: commonReducer },
 });
